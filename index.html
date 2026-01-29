@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm Ra - Minimal RGB Downloader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap');
+        
+        body {
+            background-color: #050a14;
+            color: white;
+            font-family: 'Kantumruy Pro', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* --- ស៊ុមភ្លើងរត់ RGB --- */
+        .rgb-card {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            background: #0d1117;
+            border-radius: 25px;
+            padding: 30px 20px;
+            text-align: center;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .rgb-card::before {
+            content: "";
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: conic-gradient(#00f2ff, #ff00ea, #00f2ff);
+            animation: rotate 4s linear infinite;
+            top: -25%;
+            left: -25%;
+            z-index: -2;
+        }
+
+        .rgb-card::after {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            background: #0d1117;
+            border-radius: 22px;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- ផ្នែកដោនឡូត --- */
+        h2 { margin-bottom: 20px; color: #00f2ff; text-shadow: 0 0 10px #00f2ff; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            background: #050a14;
+            color: white;
+            outline: none;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        .btn-dl {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(90deg, #00f2ff, #ff00ea);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* --- QR Code --- */
+        .qr-box {
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 25px;
+        }
+        .qr-box img { width: 150px; height: 150px; display: block; }
+
+        #status { font-size: 12px; color: #8b949e; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="rgb-card">
+        <i class="fas fa-bolt" style="font-size: 2.5rem; color: #00f2ff; margin-bottom: 10px;"></i>
+        <h2>I'M RA</h2>
+        
+        <input type="text" id="urlInput" placeholder="បិទភ្ជាប់ Link វីដេអូ...">
+        <button class="btn-dl" id="dlBtn">Download Now</button>
+        <div id="status"></div>
+
+        <div class="qr-box">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/I_AM_RA2" alt="QR">
+        </div>
+        <p style="margin-top: 10px; font-weight: bold; color: #00f2ff;">@I_AM_RA2</p>
+    </div>
+
+    <script>
+        document.getElementById('dlBtn').addEventListener('click', async () => {
+            const url = document.getElementById('urlInput').value;
+            const status = document.getElementById('status');
+            if (!url) return alert("សូមបញ្ចូល Link!");
+
+            status.innerText = "កំពុងដំណើរការ...";
+            try {
+                const res = await fetch('https://api.cobalt.tools/api/json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    status.innerText = "ជោគជ័យ!";
+                    window.location.href = data.url; 
+                } else {
+                    status.innerText = "រកមិនឃើញវីដេអូ!";
+                }
+            } catch (e) { status.innerText = "Error!"; }
+        });
+    </script>
+</body>
+</html>
